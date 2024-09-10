@@ -30,15 +30,23 @@ https://www.youtube.com/watch?v=vEE84uuOX_Q - part1
 https://www.youtube.com/watch?v=CStaNMsaot4 - part2
 
 ## Articles
-https://eprint.iacr.org/2023/246.pdf - hard one, formalization of CRYSTALS-Dilithium
-https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9505217 - The thing I want to prove but for the DH problem
-https://eprint.iacr.org/2004/332 - Sequences of games: a tool for taming complexity in security proofs
-https://crypto.stanford.edu/~dabo/cryptobook/BonehShoup_0_6.pdf - A graduate Course in Applied Cryptography
+- https://eprint.iacr.org/2023/246.pdf - hard one, formalization of CRYSTALS-Dilithium
+- https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9505217 - The thing I want to prove but for the DH problem
+- https://eprint.iacr.org/2004/332 - Sequences of games: a tool for taming complexity in security proofs
+- https://crypto.stanford.edu/~dabo/cryptobook/BonehShoup_0_6.pdf - A graduate Course in Applied Cryptography
 
 ## Side-notes
-I want to prove Existensial Unforgeability in Shipovnik
-Sequences of games is a game winner
-
+- I want to prove Existensial Unforgeability in Shipovnik
+- Sequences of games is a game winner
+- Nonce Respecting Scheme defined in Easycrypt tutorial is based on the
+hardness of the function mapping the nonces to the plaintexts. 
+   > Intuitively, this property captures the extent to which an (unknown) random
+   > function from the function family is indistinguishable from a truly random
+   > function of the same type (i.e., from nonces to plaintexts) by observing the
+   > outputs corresponding to unique/non-repeating inputs.
+- For me, it means that the computational infeasibility to solve the Syndrome
+Decoding problem is the same as inability to forge a valid digital signature
+for fresh message
 
 ### Sequences of games: a tool for taming complexity in security proofs
 - Security for cryptograptic primitives is typically defined as an attack game
@@ -53,3 +61,10 @@ S_{i+1}, то тогда игры можно отличить. Если мы п�
 околонулевое
 2. Transitions based on failure events
 3. Bridging steps
+
+## Tutorial on proving security for EasyCrypt
+https://easycrypt.gitlab.io/easycrypt-web/docs/simple-tutorial/security
+
+## Easycrypt notes
+1. All variables must be explicitly defined beforehand
+2. A module can have only one return statement. This is done to reduce program complexity. To return something, create a return variable and assign return value to it.
