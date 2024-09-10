@@ -1,47 +1,56 @@
-require import Bool Int IntDiv DInterval.
+require import AllCore List Distr.
 
-(* reserved for future redefinition of the encryption scheme
+type key, ptxt, nonce.
 
-module type Scheme = {
-  proc genKey() : int
-  proc en
+type ctxt = ptxt.
+
+op (+) : ptxt -> ptxt -> ptxt.
+
+op f : key -> nonce -> ptxt.
+
+op dkey : key distr.
+
+axiom addpA (x y z : ptxt) : x + y + z = x + (y + z).
+axiom addpC (x y : ptxt) : x + y = y + x.
+axiom addKp (x y : ptxt) : x + x + y = y.
+
+(* 
+  Module type for (symmetric) nonce-based encryption schemes.
+  Intuitively, this specifies the interface that such 
+  encryption schemes are expected to implement.
+*)
+module type NBEncScheme = {
+  proc kgen(): key
+  proc enc(k : key, n : nonce, m : ptxt): ctxt
+  proc dec(k : key, n : nonce, c : ctxt): ptxt
 }.
 
-  *)
+(* 
+  Specification of the considered nonce-based encryption scheme.
+  Because the module implements all the procedures specified in the NBEncScheme
+  module type, the module has this type (making it valid to give it this type).  
+*)
+module E : NBEncScheme = {
+  proc kgen() : key = {
+    var k;
 
-
-require (****) Group.
-
-clone Group.CyclicGroup as G.
-
-axiom prime_p : IntDiv.prime G.order.
-
-clone G.PowZMod as GP with
-  lemma prime_order <- prime_p.
-
-clone GP.FDistr as FD.
-
-import G GP FD GP.ZModE.
-
-type gdouble =  (group * group).
-
-  (*
-Here we define the module Simple, which represents simple encryption/decryption scheme we will use later
-  *)
-
-module Simple = {
-  proc keygen() : gdouble = {
-    var x: exp;
-    x <$ FD.dt;
-    return (g ^ x, g ^ (-x));
+    k <$ dkey;
+    
+    return k;
   }
 
-  proc encrypt(msg: group, pub_key: group) : group = {
-    return msg * pub_key;
+  proc enc(k : key, n : nonce, m : ptxt) : ctxt = {
+    return (f k n) + m;
   }
 
-  proc decrypt(ct: group, priv_key: group) : group = {
-    return ct * priv_key;
+  proc dec(k : key, n : nonce, c : ctxt) : ptxt = {
+    return (f k n) + c;
   }
 }.
+
+module type Oraclei = {
+  proc init(): unit
+  proc enc(n: nonce, m: ptxt): ctxt option
+}.
+
 
