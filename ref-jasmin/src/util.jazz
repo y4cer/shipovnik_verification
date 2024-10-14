@@ -1,0 +1,33 @@
+require "params.jazz"
+
+inline
+fn __dot_product(reg u64 l, reg u64 r, reg u64 len) -> reg u8 {
+
+	inline u64 rec, nwords;
+
+	// wordwise dot product
+	inline int i;
+	reg u64 w;
+	w = 0;
+	nwords = len / 64;
+	for i=0 to nwords {
+		w ^= (u64)[l + i] & (u64)[r + i];
+	}
+
+	// bytewise dot product
+	inline int start;
+	start = nwords * 64;
+	rec = len % 64;
+	reg u8 b;
+	b = 0;
+	for i=0 to rec {
+		b ^= (u8)[l + start + i] & (u8)[r + start + i]
+	}
+
+	return b;
+}
+
+// export
+// fn dot_product() -> reg u8 {
+// 	(u
+// }

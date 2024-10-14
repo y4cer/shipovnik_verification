@@ -1,0 +1,6 @@
+require "util.jazz"
+
+export
+fn func(reg u64 v1)  {
+	dot_product(v1);
+}

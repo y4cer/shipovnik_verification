@@ -14,10 +14,10 @@ ${OUT_DIR}:
 dirs: ${OUT_DIR}
 
 
-$(BJ)/util.s: $(SRC)/util.jazz
+$(BJ)/%.s: $(SRC)/%.jazz
 	$(JASMINC) $< -o $@
 
-$(BJ)/main: $(BJ)/util.s $(SRC)/main.c
+$(BJ)/main: $(BJ)/util.s $(BJ)/keygen.s $(SRC)/main.c
 	$(CC) -Wall $^ -o $@
 
 build: $(BJ)/main

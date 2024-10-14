@@ -1,0 +1,2 @@
+param int n = 5;
+param int k = 4;
