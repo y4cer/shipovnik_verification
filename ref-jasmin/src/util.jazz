@@ -1,10 +1,17 @@
 require "params.jazz"
 
 inline
-fn __get_byte(reg u64 w, reg u64 byte_index) -> reg u8 {
-	reg u8 res;
+fn __xor_word(reg u64 w) -> reg u64 {
+	reg u64 res;
+	res = 0;
 
-	res = (w >> byte_index * 8) & 0xff;
+	inline int i;
+	for i=0 to 7 {
+		res ^= w;
+		w >>= 8;
+	}
+
+	res &= 0xff;
 
 	return res;
 }
@@ -16,31 +23,51 @@ fn dot_product(reg u64 l, reg u64 r) -> reg u64 {
 
 	// wordwise dot product
 	inline int i;
-	reg u64 w;
+	reg u64 w, ll, rr, tmp;
 	w = 0;
 	nwords = n / 64;
 	for i=0 to nwords {
-		w ^= (u64)[l + i] & (u64)[r + i];
+		ll = (u64)[l + i];
+		rr = (u64)[r + i];
+		tmp = ll & rr;
+		w ^= tmp;
 	}
 
 	// bytewise dot product
 	inline int start;
 	start = nwords * 64;
 	rec = n % 64;
-	reg u64 b, tmp;
+	reg u64 b;
 	b = 0;
 	for i=0 to rec {
-		tmp = (u64)[l + start + i] & 0xff;
-		b ^= tmp;
-		tmp = (u64)[r + start + i] & 0xff;
+		ll = (u64)[l + start + i];
+		rr = (u64)[r + start + i];
+		tmp = ll & rr;
 		b ^= tmp;
 	}
-	reg u64 res;
-	res = 0;
 
-	res ^= (w & 0xff);
+	reg u64 res;
+	reg u64 w1;
+	stack u32 w1;
+
+	res = __xor_word(w);
+
+	reg u64 tmp_res;
 	res ^= b;
 
-	return b;
+	tmp_res = res;
+	tmp_res >>= 4;
+	res ^= tmp_res;
+
+	tmp_res = res;
+	tmp_res >>= 2;
+	res ^= tmp_res;
+
+	tmp_res = res;
+	tmp_res >>= 1;
+	res ^= tmp_res;
+
+	res &= 1;
+	return res;
 }
 
